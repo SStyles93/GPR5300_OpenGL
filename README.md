@@ -4,7 +4,7 @@ This project was done at the SAE Institute Geneva during the GPR5300-ComputerGra
 The project is a grouping of all the code done while learning [OpenGL](https://www.opengl.org/) and its creation 
 is resumed in my blogpost that you can find [here](https://sstyles93.github.io/).
 
-<b>The original project with all trials & errors is [HERE](https://github.com/SStyles93/opengl-scene) ! </b>
+## The original project with all trials & errors is [HERE](https://github.com/SStyles93/opengl-scene) !
 
 [Folders](#folders) | [Folder content](#folder-content) |  
 ----- | -----
