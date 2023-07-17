@@ -13,9 +13,7 @@ in vec3 FragPos;
 
 uniform sampler2D texture_diffuse1;
 uniform sampler2D texture_normal1;
-uniform sampler2D texture_ao1;
-uniform sampler2D texture_roughness1;
-uniform sampler2D texture_metallic1;
+uniform sampler2D texture_arm1;
 
 void main()
 {    
@@ -39,9 +37,7 @@ void main()
     gNormal.rgb = TBN * tangentNormal;
 
     // Ambient Roughness Metallic
-    gARM.r = texture(texture_ao1, TexCoords).r;
-    gARM.g = texture(texture_roughness1, TexCoords).r;
-    gARM.b = texture(texture_metallic1, TexCoords).r;
+    gARM.rgb = texture(texture_arm1, TexCoords).rgb;
 
     //SSAO ViewPos
     gSSAO = FragPos;

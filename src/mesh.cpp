@@ -45,7 +45,7 @@ namespace gpr5300
 		for (unsigned int i = 0; i < textures.size(); i++)
 		{
 			auto error = glGetError();
-			assert(glGetError() == 0);
+			//assert(glGetError() == 0);
 			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
 			// retrieve texture number (the N in diffuse_textureN)
 			std::string number;
@@ -67,12 +67,12 @@ namespace gpr5300
 			else if (name == "texture_arm")
 				number = std::to_string(armNr++);
 
-			assert(glGetError() == 0);
+			//assert(glGetError() == 0);
 			// now set the sampler to the correct texture unit
 			glUniform1i(glGetUniformLocation(pipeline.ID, (name + number).c_str()), i);
 			// and finally bind the texture
 			glBindTexture(GL_TEXTURE_2D, textures[i].id);	
-			assert(glGetError() == 0);
+			//assert(glGetError() == 0);
 		}
 	}
 

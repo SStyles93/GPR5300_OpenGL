@@ -118,6 +118,7 @@ namespace gpr5300
 
 	void Model::DrawStaticInstances(Pipeline& pipeline, const int count)
 	{
+
 		for (unsigned int i = 0; i < meshes.size(); i++)
 		{
 			auto error = glGetError();
@@ -232,7 +233,7 @@ namespace gpr5300
 		// read file via ASSIMP
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(
-			path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+			path, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace);
 		// check for errors
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 		{
@@ -344,7 +345,7 @@ namespace gpr5300
 		std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, "texture_normal");
 		textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
-		if (material->GetTextureCount(aiTextureType_UNKNOWN) == 0)
+		if (material->GetTextureCount(aiTextureType_OPACITY) == 0)
 		{
 
 			// 4. ao map 
@@ -361,7 +362,7 @@ namespace gpr5300
 		else
 		{
 			// 7 ARM
-			std::vector<Texture> armMaps = loadMaterialTextures(material, aiTextureType_UNKNOWN, "texture_arm");
+			std::vector<Texture> armMaps = loadMaterialTextures(material, aiTextureType_OPACITY, "texture_arm");
 			textures.insert(textures.end(), armMaps.begin(), armMaps.end());
 		}
 

@@ -30,6 +30,19 @@ namespace gpr5300
 				glBindTexture(GL_TEXTURE_2D, textures[i]);
 			}
 		}
+		void setPBRPipeline(Pipeline& pipeline)
+		{
+			pipeline.use();
+			pipeline.setInt("texture_diffuse1", 0);
+			pipeline.setInt("texture_normal1", 1);
+			pipeline.setInt("texture_arm1", 2);
+
+			for (int i = 0; i < textures.size(); i++)
+			{
+				glActiveTexture(GL_TEXTURE0 + i);
+				glBindTexture(GL_TEXTURE_2D, textures[i]);
+			}
+		}
 	};
 
 	class RenderScene : public Scene
@@ -179,6 +192,12 @@ namespace gpr5300
 			{
 				SetPointLights();
 			}
+		}
+
+		if(ImGui::CollapsingHeader("Camera Settings"))
+		{
+			ImGui::Text("Use Key [1] or [2] to Lower/Increase Speed");
+			ImGui::SliderFloat("Speed", &camera->MovementSpeed, 0.1f, 100.0f);
 		}
 
 		ImGui::End();
@@ -539,12 +558,14 @@ namespace gpr5300
 	void RenderScene::Begin()
 	{
 
+
 		camera->Position = glm::vec3(0.0f, 12.0f, 23.0f);
 
 #pragma region OpenGL Settings
 
 		// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-		stbi_set_flip_vertically_on_load(true);
+		//stbi_set_flip_vertically_on_load(false);
+		
 
 		// configure global opengl state
 		// -----------------------------
@@ -563,9 +584,9 @@ namespace gpr5300
 
 #pragma region Loading
 
+		poulpe = Model("data/objects/poulpe/PoulpeSam.obj");
 		backpack = Model("data/objects/backpack/backpack.obj");
 		rock = Model("data/objects/rock/rock.obj");
-		poulpe = Model("data/objects/poulpe/PoulpeSam.obj");
 
 		//Wall material
 		wall.textures.emplace_back(LoadTexture("data/textures/pbr/wall/albedo.png"));
@@ -639,6 +660,11 @@ namespace gpr5300
 		pipelines.emplace_back(
 			"data/shaders/RenderScene/bloom_final.vert",
 			"data/shaders/RenderScene/bloom_final.frag");
+
+		//ARM geometry 12
+		pipelines.emplace_back(
+			"data/shaders/RenderScene/geom_pass.vert",
+			"data/shaders/RenderScene/geom_ARM.frag");
 
 #pragma endregion
 
@@ -723,6 +749,10 @@ namespace gpr5300
 		pipelines[0].setInt("texture_metallic1", 2);
 		pipelines[0].setInt("texture_roughness1", 3);
 		pipelines[0].setInt("texture_ao1", 4);
+
+		pipelines[12].setInt("texture_diffuse1", 0);
+		pipelines[12].setInt("texture_normal1", 1);
+		pipelines[12].setInt("texture_arm1", 2);
 
 		// Lighting pass
 		// -------------
@@ -1207,7 +1237,17 @@ namespace gpr5300
 		pipelines[0].setMat4("projection", projection);
 		pipelines[0].setMat4("view", view);
 
-		DrawScene(pipelines[0]);
+		wall.setPipeline(pipelines[0]);
+		glBindVertexArray(planeVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glBindVertexArray(0);
+		rock.DrawInstances(pipelines[0], rockMatrices, rockAmount, projection, view);
+
+		poulpe.DrawInstances(pipelines[12], poulpeMatrices, 1, projection, view);
+		backpack.DrawInstances(pipelines[0], backpackMatrices, backPackAmount, projection, view);
+
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
