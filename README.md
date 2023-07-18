@@ -1,10 +1,10 @@
 # GPR5300 - ComputerGraphics - RenderScene
 
 This project was done at the SAE Institute Geneva during the GPR5300-ComputerGraphics module.
-The project is a grouping of all the code done while learning [OpenGL](https://www.opengl.org/) and its creation 
+It is one of the scenes done after learning [OpenGL](https://www.opengl.org/) and its creation 
 is resumed in my blogpost that you can find [here](https://sstyles93.github.io/).
 
-## The original project with all trials & errors is [HERE](https://github.com/SStyles93/opengl-scene) !
+# The original project with all trials is [HERE](https://github.com/SStyles93/opengl-scene) !
 
 [Folders](#folders) | [Folder content](#folder-content) |  
 ----- | -----
@@ -14,7 +14,7 @@ is resumed in my blogpost that you can find [here](https://sstyles93.github.io/)
 ## Folders
 
 -	<h4 id="data"><a href="https://github.com/SStyles93/opengl-scene/tree/main/data">Data</a></h4>  
-	Contains the shaders used for the project. You can download the textures and objects [here]().	
+	Contains the shaders used for the project. You can download the textures and objects [here](https://drive.google.com/drive/u/0/folders/1r60pUaqA7q4aLQIBk-h2yQ0TdRas9ExQ).	
 
 -	<h4 id="include"><a href="https://github.com/SStyles93/opengl-scene/tree/main/include">Include</a></h4>  
 	Contains all the header files
