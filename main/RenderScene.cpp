@@ -186,7 +186,7 @@ namespace gpr5300
 				RandomColour();
 			}*/
 			ImGui::SliderFloat("Radius", &pointLightRadiusFromCenter, 0, 50);
-			ImGui::SliderFloat("Intensity", &LightColorPower, 0.0f, 100.0f);
+			ImGui::SliderFloat("Point Intensity", &LightColorPower, 0.0f, 100.0f);
 			ImGui::SliderInt("Amount", &NR_LIGHTS, 0, 128);
 			if (ImGui::Button("Set"))
 			{
