@@ -141,8 +141,8 @@ namespace gpr5300
 		unsigned int depthMap;
 		glm::mat4 lightProjection, lightView;
 		glm::mat4 lightSpaceMatrix;
-		float near_plane = 0.1f, far_plane = 200.0f;
-		float shadowFrustrum = 10.0f;
+		float near_plane = 0.1f, far_plane = 100.0f;
+		float shadowFrustrum = 5.0f;
 
 		//BloomBlur
 		unsigned int hdrBuffer;
@@ -558,15 +558,10 @@ namespace gpr5300
 	void RenderScene::Begin()
 	{
 
-
 		camera->Position = glm::vec3(0.0f, 12.0f, 23.0f);
 
 #pragma region OpenGL Settings
-
-		// tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-		//stbi_set_flip_vertically_on_load(false);
 		
-
 		// configure global opengl state
 		// -----------------------------
 		glEnable(GL_DEPTH_TEST);
@@ -1242,12 +1237,8 @@ namespace gpr5300
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 		glBindVertexArray(0);
 		rock.DrawInstances(pipelines[0], rockMatrices, rockAmount, projection, view);
-
 		poulpe.DrawInstances(pipelines[12], poulpeMatrices, 1, projection, view);
 		backpack.DrawInstances(pipelines[0], backpackMatrices, backPackAmount, projection, view);
-
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -1341,7 +1332,7 @@ namespace gpr5300
 
 		//Shadow
 		glActiveTexture(GL_TEXTURE8);
-		glBindTexture(GL_TEXTURE_2D, depthMap);
+		glBindTexture(GL_TEXTURE_2D, depthMap);	
 
 		// send light relevant uniforms
 		for (unsigned int i = 0; i < lightPositions.size(); i++)
@@ -1477,6 +1468,15 @@ namespace gpr5300
 		glDeleteBuffers(1, &cubeVBO);
 		glDeleteVertexArrays(1, &quadVAO);
 		glDeleteBuffers(1, &quadVBO);
+
+		glDeleteBuffers(1, &hdrBuffer);
+		glDeleteBuffers(1, &hdrRBO);
+		glDeleteBuffers(1, &colorBuffers[0]);
+		glDeleteBuffers(1, &colorBuffers[1]);
+		glDeleteBuffers(1, &pingpongFBO[0]);
+		glDeleteBuffers(1, &pingpongFBO[1]);
+		glDeleteBuffers(1, &pingpongColorbuffers[0]);
+		glDeleteBuffers(1, &pingpongColorbuffers[1]);
 
 		glDeleteBuffers(1, &ssaoFBO);
 		glDeleteBuffers(1, &ssaoBlurFBO);
