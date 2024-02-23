@@ -1,10 +1,10 @@
 #pragma once
 #include "SDL_scancode.h"
 
+#include <glm/glm.hpp>
+
 namespace gpr5300
 {
-	constexpr float SCREEN_WIDTH = 1290.0f;
-	constexpr float SCREEN_HEIGHT = 720.0f;
 
 	//Camera values
 	constexpr float MAX_PITCH = 89.0f;

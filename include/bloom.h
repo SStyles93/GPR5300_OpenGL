@@ -1,4 +1,11 @@
 #pragma once
+#include <glm/glm.hpp>
+#include <GL/glew.h>
+#include <iostream>
+#include <vector>
+
+#include "pipeline.h"
+
 namespace gpr5300
 {
 	struct bloomMip
@@ -14,6 +21,7 @@ namespace gpr5300
 		bloomFBO();
 		~bloomFBO();
 		bool Init(unsigned int windowWidth, unsigned int windowHeight, unsigned int mipChainLength);
+		void Resize(unsigned int windowWidth, unsigned int windowHeight);
 		void Destroy();
 		void BindForWriting();
 		const std::vector<bloomMip>& MipChain() const;
@@ -22,6 +30,7 @@ namespace gpr5300
 		bool mInit;
 		unsigned int mFBO;
 		std::vector<bloomMip> mMipChain;
+		bloomMip mip;
 	};
 
 	bloomFBO::bloomFBO() : mInit(false) {}
@@ -45,8 +54,6 @@ namespace gpr5300
 
 		for (GLuint i = 0; i < mipChainLength; i++)
 		{
-			bloomMip mip;
-
 			mipSize *= 0.5f;
 			mipIntSize /= 2;
 			mip.size = mipSize;
@@ -87,7 +94,34 @@ namespace gpr5300
 		mInit = true;
 		return true;
 	}
+	void bloomFBO::Resize(unsigned int windowWidth, unsigned int windowHeight)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, mFBO);
+		const unsigned int num_bloom_mips = 6;
 
+		glm::vec2 mipSize((float)windowWidth, (float)windowHeight);
+		glm::ivec2 mipIntSize((int)windowWidth, (int)windowHeight);
+		
+		mMipChain.clear();
+		
+		for (GLuint i = 0; i < 6; i++)
+		{
+			mipSize *= 0.5f;
+			mipIntSize /= 2;
+			mip.size = mipSize;
+			mip.intSize = mipIntSize;
+
+			glBindTexture(GL_TEXTURE_2D, mip.texture);
+			// we are downscaling an HDR color buffer, so we need a float texture format
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F,
+				(int)mipSize.x, (int)mipSize.y,
+				0, GL_RGB, GL_FLOAT, nullptr);
+			
+			mMipChain.emplace_back(mip);
+		}
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,GL_TEXTURE_2D, mMipChain[0].texture, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 	void bloomFBO::Destroy()
 	{
 		for (int i = 0; i < (int)mMipChain.size(); i++)
@@ -118,6 +152,7 @@ namespace gpr5300
 		BloomRenderer();
 		~BloomRenderer();
 		bool Init(unsigned int windowWidth, unsigned int windowHeight);
+		void Resize(unsigned int windowWidth, unsigned int windowHeight);
 		void Destroy();
 		//void RenderBloomTexture(unsigned int srcTexture, float filterRadius);
 		unsigned int BloomTexture();
@@ -169,6 +204,11 @@ namespace gpr5300
 		glUseProgram(0);
 
 		return true;
+	}
+
+	void BloomRenderer::Resize(unsigned int windowWidth, unsigned int windowHeight)
+	{
+		mFBO.Resize(windowWidth, windowHeight);
 	}
 
 	void BloomRenderer::Destroy()

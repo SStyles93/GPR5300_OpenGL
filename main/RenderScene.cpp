@@ -61,6 +61,10 @@ namespace gpr5300
 
 		void SetUpPlane();
 
+
+		void ResizeBuffers() override;
+
+
 		void DrawScene(Pipeline& pipeline, std::vector<Model> models = {});
 
 		std::vector<Pipeline> pipelines{};
@@ -555,6 +559,51 @@ namespace gpr5300
 		return a + f * (b - a);
 	}
 
+
+	void RenderScene::ResizeBuffers()
+	{
+		assert(glGetError() == 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+		//Position buffer
+		glBindTexture(GL_TEXTURE_2D, gPosition);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+		//Color buffer
+		glBindTexture(GL_TEXTURE_2D, gBaseColor);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gBaseColor, 0);
+		//Normal buffer
+		glBindTexture(GL_TEXTURE_2D, gNormal);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gNormal, 0);
+		//ARM buffer
+		glBindTexture(GL_TEXTURE_2D, gARM);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT3, GL_TEXTURE_2D, gARM, 0);
+		//SSAO buffer
+		glBindTexture(GL_TEXTURE_2D, gSSAO);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT4, GL_TEXTURE_2D, gSSAO, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		assert(glGetError() == 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+		//SSAO Color
+		glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RED, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+		//SSAO Blur
+		glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+		glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RED, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBufferBlur, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		assert(glGetError() == 0);
+	}
+
 	void RenderScene::Begin()
 	{
 
@@ -576,7 +625,7 @@ namespace gpr5300
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region Loading
 
 		poulpe = Model("data/objects/poulpe/PoulpeSam.obj");
@@ -597,7 +646,7 @@ namespace gpr5300
 		gold.textures.emplace_back(LoadTexture("data/textures/pbr/gold/ao.png"));
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region Shader Loading
 
 		// build and compile shaders
@@ -662,7 +711,7 @@ namespace gpr5300
 			"data/shaders/RenderScene/geom_ARM.frag");
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region ModelMatrices setting
 
 		backpackMatrices.resize(backPackAmount);
@@ -698,7 +747,7 @@ namespace gpr5300
 		planeMatrice.SetObject(VEC3_ZERO, VEC3_UP, 0.0f, glm::vec3(50.0f, 0.1f, 50.0f));
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region Objects setting
 
 		backpack.SetUpVBO(backpackMatrices);
@@ -708,7 +757,7 @@ namespace gpr5300
 		SetUpPlane();
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region ShadowMap
 
 		// configure depth map FBO
@@ -733,7 +782,7 @@ namespace gpr5300
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region gBuffer setting
 
 		//Geom pass
@@ -777,6 +826,7 @@ namespace gpr5300
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+
 		// color buffer
 		glGenTextures(1, &gBaseColor);
 		glBindTexture(GL_TEXTURE_2D, gBaseColor);
@@ -824,7 +874,7 @@ namespace gpr5300
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region SSAO setting
 
 		//SSAO
@@ -898,7 +948,7 @@ namespace gpr5300
 
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region IBL setting
 
 		// pbr: setup framebuffer
@@ -1116,13 +1166,13 @@ namespace gpr5300
 		glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region LightBoxes setting
 
 		SetPointLights();
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region BloomBlur
 
 		//Bloom Blur
@@ -1163,13 +1213,13 @@ namespace gpr5300
 		bloomRenderer.Init(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 	}
 
 	void RenderScene::Update(float dt)
 	{
 		time_ += dt;
-
+		assert(glGetError() == 0);
 #pragma region Shadows
 
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -1213,7 +1263,7 @@ namespace gpr5300
 		glCullFace(GL_BACK);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region Geometry Pass
 
 		//// render
@@ -1243,7 +1293,7 @@ namespace gpr5300
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region SSAO
 
 		// 2. generate SSAO texture
@@ -1281,7 +1331,7 @@ namespace gpr5300
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region LightPass
 
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrBuffer);
@@ -1375,7 +1425,7 @@ namespace gpr5300
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region Light Boxes
 
 		// 2.5. copy content of geometry's depth buffer to default framebuffer's depth buffer
@@ -1424,7 +1474,7 @@ namespace gpr5300
 			renderCube();
 		}
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region Environment CubeMap
 
 		// render skybox (render as last to prevent overdraw)
@@ -1436,7 +1486,7 @@ namespace gpr5300
 		renderEnvironmentCube();
 
 #pragma endregion
-
+		assert(glGetError() == 0);
 #pragma region BloomBlur
 
 		RenderBloomTexture(bloomRenderer, colorBuffers[1], bloomFilterRadius);
@@ -1455,7 +1505,7 @@ namespace gpr5300
 		renderImage();
 
 #pragma endregion
-
+		std::cerr << glGetError();
 		assert(glGetError() == 0);
 
 	}

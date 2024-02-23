@@ -8,7 +8,7 @@ class Engine
 {
 public:
     Engine(Scene* scene);
-    Engine(Scene* scene, Camera* camera);
+    //Engine(Scene* scene, Camera* camera);
     void Run();
 private:
     void Begin();
@@ -16,6 +16,9 @@ private:
     Scene* scene_ = nullptr;
     SDL_Window* window_ = nullptr;
     SDL_GLContext glRenderContext_{};
+
+    float SCREEN_WIDTH = 1290;
+    float SCREEN_HEIGHT = 720;
 };
     
 } // namespace gpr5300

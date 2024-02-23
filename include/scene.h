@@ -25,11 +25,16 @@ namespace gpr5300
 		virtual void DrawImGui() {}
 		virtual  void OnEvent(const SDL_Event& event) {}
 
+		virtual void ResizeBuffers() = 0;
+
 		Camera* camera = nullptr;
 
 		//action given by the engine
 		bool action1 = false;
 		bool action2 = false;
+
+		float SCREEN_WIDTH;
+		float SCREEN_HEIGHT;
 
 		///<summary>
 		///Initializes a texture and returns it's ID

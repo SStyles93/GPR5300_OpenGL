@@ -12,7 +12,11 @@
 
 namespace gpr5300
 {
-	Engine::Engine(Scene* scene) : scene_(scene) {}
+	Engine::Engine(Scene* scene) : scene_(scene) 
+	{
+		scene_->SCREEN_WIDTH = this->SCREEN_WIDTH;
+		scene_->SCREEN_HEIGHT = this->SCREEN_HEIGHT;
+	}
 	//Engine::Engine(Scene* scene, Camera* camera) : scene_(scene) {}
 
 	void Engine::Run()
@@ -48,10 +52,12 @@ namespace gpr5300
 						break;
 					case SDL_WINDOWEVENT_RESIZED:
 					{
-						glm::uvec2 newWindowSize;
-						newWindowSize.x = event.window.data1;
-						newWindowSize.y = event.window.data2;
+						
+						scene_->SCREEN_WIDTH = event.window.data1;
+						scene_->SCREEN_HEIGHT = event.window.data2;
 						//TODO do something with the new size
+						scene_->ResizeBuffers();
+
 						break;
 					}
 					default:
@@ -184,7 +190,7 @@ namespace gpr5300
 
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-		constexpr auto windowSize = glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT);
+		auto windowSize = glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT);
 		window_ = SDL_CreateWindow(
 			"GPR5300",
 			SDL_WINDOWPOS_UNDEFINED,
