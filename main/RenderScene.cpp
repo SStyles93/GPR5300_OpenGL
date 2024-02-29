@@ -602,6 +602,24 @@ namespace gpr5300
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		assert(glGetError() == 0);
+
+		/*glBindFramebuffer(GL_FRAMEBUFFER, hdrBuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, hdrRBO);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, SCREEN_WIDTH, SCREEN_HEIGHT);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, hdrRBO);
+
+		for (unsigned int i = 0; i < 2; i++)
+		{
+			glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+		}*/
+
+		/*glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCREEN_WIDTH, SCREEN_HEIGHT);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+		glBindRenderbuffer(GL_RENDERBUFFER, 0);*/
+		
+		assert(glGetError() == 0);
 	}
 
 	void RenderScene::Begin()
@@ -1442,7 +1460,7 @@ namespace gpr5300
 			GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, hdrBuffer);
-		////glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// 3. render lights on top of scene
 		// --------------------------------
@@ -1504,8 +1522,9 @@ namespace gpr5300
 		pipelines[11].setFloat("exposure", exposure);
 		renderImage();
 
+	
+
 #pragma endregion
-		std::cerr << glGetError();
 		assert(glGetError() == 0);
 
 	}

@@ -14,8 +14,8 @@ namespace gpr5300
 {
 	Engine::Engine(Scene* scene) : scene_(scene) 
 	{
-		scene_->SCREEN_WIDTH = this->SCREEN_WIDTH;
-		scene_->SCREEN_HEIGHT = this->SCREEN_HEIGHT;
+		scene_->SCREEN_WIDTH = 1400;
+		scene_->SCREEN_HEIGHT = 800;
 	}
 	//Engine::Engine(Scene* scene, Camera* camera) : scene_(scene) {}
 
@@ -55,8 +55,9 @@ namespace gpr5300
 						
 						scene_->SCREEN_WIDTH = event.window.data1;
 						scene_->SCREEN_HEIGHT = event.window.data2;
-						//TODO do something with the new size
 						scene_->ResizeBuffers();
+						//-- TEST
+						//---
 
 						break;
 					}
@@ -164,7 +165,7 @@ namespace gpr5300
 			scene_->DrawImGui();
 			ImGui::Render();
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+			
 			SDL_GL_SwapWindow(window_);
 		}
 		End();
@@ -190,7 +191,7 @@ namespace gpr5300
 
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
 		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-		auto windowSize = glm::ivec2(SCREEN_WIDTH, SCREEN_HEIGHT);
+		auto windowSize = glm::ivec2(scene_->SCREEN_WIDTH, scene_->SCREEN_HEIGHT);
 		window_ = SDL_CreateWindow(
 			"GPR5300",
 			SDL_WINDOWPOS_UNDEFINED,
